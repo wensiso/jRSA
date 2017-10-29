@@ -1,6 +1,6 @@
 package br.com.fat.jrsa;
 
-import java.math.BigDecimal;
+import java.math.BigInteger;
 
 public class RSA {
 	
@@ -19,15 +19,16 @@ public class RSA {
 	 * @return a array of encrypted chars
 	 */
 	public Long[] encodeStr(String str_msg) {
-		BigDecimal n = new BigDecimal(this.pubkey[0]);
-		int e = this.pubkey[1].intValue();
+		BigInteger n = new BigInteger(this.pubkey[0].toString());
+		BigInteger e = new BigInteger(this.pubkey[1].toString());
 		
 		char[] msg = str_msg.toCharArray();
 		Long[] c = new Long[msg.length];
 		
 		for(int i=0; i<msg.length; ++i) {
-			BigDecimal m = new BigDecimal((long) msg[i]);
-			c[i] = m.pow(e).remainder(n).longValueExact();
+			BigInteger m = new BigInteger(new Integer((int) msg[i]).toString());
+			c[i] = m.modPow(e, n).longValueExact();
+			//c[i] = m.pow(e).remainder(n).longValueExact();
 		}
 		return c;
 	}
@@ -38,16 +39,16 @@ public class RSA {
 	 * @return a String from decrypted chars
 	 */
 	public String decodeStr(Long[] enc) {
-		BigDecimal n = new BigDecimal(this.privkey[0]);
-		int d = this.privkey[1].intValue();
+		BigInteger n = new BigInteger(this.privkey[0].toString());
+		BigInteger d = new BigInteger(this.privkey[1].toString());
 
 		char[] msg = new char[enc.length];
 		for(int i=0; i<msg.length; ++i) {
-			BigDecimal c = new BigDecimal(enc[i]);
-			long m = c.pow(d).remainder(n).longValue();
+			BigInteger c = new BigInteger(enc[i].toString());
+			long m = c.modPow(d, n).longValueExact();
+			//long m = c.pow(d).remainder(n).longValue();
 			msg[i] = (char) m;
 		}
-
 		return new String(msg);
 	}
 	
