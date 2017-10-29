@@ -1,0 +1,1 @@
+create view cotistas as

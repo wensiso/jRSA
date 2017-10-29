@@ -46,10 +46,30 @@ public class RSA {
 			BigDecimal c = new BigDecimal(enc[i]);
 			long m = c.pow(d).remainder(n).longValue();
 			msg[i] = (char) m;
-			
 		}
 
 		return new String(msg);
+	}
+	
+	
+	public void testAll (String test_str) {
+		Long[] enc = this.encodeStr(test_str);
+		
+		System.out.println("\nString original: \n"+ test_str);
+		char[] tmp = test_str.toCharArray();
+		for(int i=0; i<tmp.length; ++i)
+			System.out.print((long) tmp[i] + ",");
+		
+		System.out.print("\n\nString encriptada: \n");
+		for(int i=0; i<enc.length; ++i)
+			System.out.print(enc[i] + ",");
+		
+		String decod_teste = this.decodeStr(enc);
+		System.out.println("\n\nString decodificada: \n" + decod_teste);
+		char[] tmp2 = test_str.toCharArray();
+		for(int i=0; i<tmp2.length; ++i)
+			System.out.print((long) tmp2[i] + ",");
+		System.out.println("--------------------------------\n");
 	}
  
 }
