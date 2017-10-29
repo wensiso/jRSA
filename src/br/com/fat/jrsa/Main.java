@@ -11,6 +11,8 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class Main {
@@ -24,15 +26,11 @@ public class Main {
 	 */
 	private static void encrypt(String msg_filename, String encrypt_filename, RSA encoder) {
 		
-		System.out.println("\nArquivo da mensagem original: " + msg_filename);
+		System.out.println("\nAbrindo arquivo da mensagem original: " + msg_filename);
 		
 		try {
-			BufferedReader in = new BufferedReader(new FileReader(msg_filename));
-			int cur_char;
-			String msg = "";
-			while ((cur_char = in.read()) != -1) 
-				msg += (char) cur_char;
-			in.close();
+			
+			String msg = new String(Files.readAllBytes(Paths.get(msg_filename)));
 						
 			System.out.println("Encriptando arquivo...");
 			Long[] enc = encoder.encodeStr(msg);
@@ -77,7 +75,7 @@ public class Main {
 			reader.close();
 			Long[] enc = clist.toArray(new Long[0]);
 			
-			System.out.println("\nDesencriptando arquivo...");
+			System.out.println("Desencriptando arquivo...");
 			String msgdec = decoder.decodeStr(enc);
 
 			System.out.println("Salvando arquivo desencriptado em: " + msgdec_filename);
@@ -122,7 +120,7 @@ public class Main {
 		
 		long end =  System.currentTimeMillis();
 		long tempoDecorrido = end - begin;
-		System.out.println("Tempo decorrido: " + tempoDecorrido + " ms");
+		System.out.println("\nTempo decorrido: " + tempoDecorrido + " ms");
 		
 	}
 }
