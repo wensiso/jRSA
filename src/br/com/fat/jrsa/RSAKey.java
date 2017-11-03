@@ -1,5 +1,13 @@
 package br.com.fat.jrsa;
 
+import java.io.BufferedWriter;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class RSAKey {
 	
 	public static Long MIN = 64L;
@@ -12,6 +20,24 @@ public class RSAKey {
 	private Long[] pubkey, privkey;
 	
 	public RSAKey(Long p, Long q) {
+		this.buildKeys(p, q);
+	}
+
+	public RSAKey(int p, int q) {
+		this((long) p, (long) q);
+	}
+	
+	public RSAKey() {
+	}
+	
+	
+	/**
+	 * Generate the public and private keys, given p and q
+	 * @param p
+	 * @param q
+	 * @return 
+	 */
+	private void buildKeys(Long p, Long q) {
 		if(p > MIN && Numbers.isPrime(p))
 			this.p = p;
 		else
@@ -36,15 +62,53 @@ public class RSAKey {
 		this.privkey[0] = n;
 		this.privkey[1] = d;
 	}
+	
+	/**
+	 * Build public and private keys automatically
+	 */
+	public void autoBuildKeys() {
+		this.buildKeys(MIN, MIN);
+	}
+	
+	/**
+	 * TODO Verify MDC between e and z
+	 * @param n
+	 * @param e
+	 * @return
+	 */
+	public boolean setPubKey(Long n, Long e) {
+		if ((e <= n) && !Numbers.isPrime(e)) {
+			this.n = n;
+			this.e = e;
+			this.pubkey = new Long[2];
+			this.pubkey[0] = n;
+			this.pubkey[1] = e;
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * TODO Verify d
+	 * @param n
+	 * @param d
+	 * @return
+	 */
+	public boolean setPrivKey(Long n, Long d) {
+		this.n = n;
+		this.d = d;
+		this.privkey = new Long[2];
+		this.privkey[0] = this.n;
+		this.privkey[1] = this.d;
+		return true;
+	}
 
-	public RSAKey(int p, int q) {
-		this((long) p, (long) q);
-	}
 	
-	public RSAKey() {
-		this(MIN,MIN);
-	}
-	
+	/**
+	 * Pick d value
+	 * @param verbose
+	 * @return
+	 */
 	private Long pick_d(boolean verbose) {		
 		Long error = -1L;
 		for(Long d=2L; d <= this.z; ++d) {
@@ -66,6 +130,10 @@ public class RSAKey {
 		return "RSAKey [p=" + p + ", q=" + q + ", n=" + n + ", z=" + z + ", e=" + e + ", d=" + d + "]";
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public Long[] getPublic() {
 		return pubkey;
 	}
@@ -74,10 +142,31 @@ public class RSAKey {
 		return privkey;
 	}
 	
+	/**
+	 * Save the chosen key in file 
+	 * @param key
+	 * @param path
+	 */
+	private void saveFileKey(Long[] key, String path) {
+		try {
+			FileWriter fw = new FileWriter(path);
+			BufferedWriter writer = new BufferedWriter(fw);		
+			String str = "(" + key[0].toString() + ", " + key[1].toString() + ")";
+			writer.write(str);
+			writer.flush();
+			writer.close();
+		} catch (IOException e) {
+			System.err.println("\nErro: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
 	
+	public void savePublicKey(String path) {
+		this.saveFileKey(pubkey, path);
+	}
 	
-
+	public void savePrivateKey(String path){
+		this.saveFileKey(privkey, path);
+	}
 	
-	
-
 }
