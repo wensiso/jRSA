@@ -32,17 +32,20 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		
-		String prog = "jRSA - A RSA education tool writen in Java\n";
-		String usage = "\tjava jRSA -e <open_file> -o <encrypted_file> [-k] [-v]\n"
+		String prog = "jRSA - Uma ferramenta educacional para ensino do algoritmo RSA\n";
+		String usage = "Modo de uso:\n"
+				+ "\tjava jRSA -e <open_file> -o <encrypted_file> [-k] [-v]\n"
 				+ "\tjava jRSA -d <encrypted_file> -o <open_file> [-k] [-v]";
 		
 		System.out.println(prog);
 		
-		CommandLineParser parser = new DefaultParser();
-		
+		CommandLineParser parser = new DefaultParser();	
 		Options options = new Options();
+		options.addOption("e", false, "encriptar arquivo");
+		options.addOption("d", false, "desencriptar arquivo");
+		options.addOption("o", false, "arquivo de saída");
 		options.addOption("k", false, "gera um novo par de chaves");
-		
+		options.addOption("v", false, "imprime arquivo aberto");
 		
 		RSAKey key = new RSAKey();
 		
