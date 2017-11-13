@@ -12,7 +12,11 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import org.apache.commons.cli.*;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import br.com.fat.jrsa.RSAKey;
@@ -86,7 +90,7 @@ public class Main {
 		options.addOption("v", false, "imprime arquivo aberto");
 		
 		RSAKey key = new RSAKey();
-		
+				
 		try {
 			Scanner in = new Scanner(System.in);
 			String useropt = "n";
@@ -101,6 +105,7 @@ public class Main {
 				System.out.println("Arquivo para encriptar: " + encrypt_filename);
 				decrypt = true;
 			} else {
+				in.close();
 				throw new ParseException("Arquivo de origem não informado");
 			}
 			
@@ -108,12 +113,15 @@ public class Main {
 				out_filename = cmd.getOptionValue("o");
 				System.out.println("Arquivo de destino: " + out_filename + "\n");
 			} else {
+				in.close();
 				throw new ParseException("Arquivo de destino não informado");
 			}
 			
 			if(cmd.hasOption("k")) {
-				if(decrypt)
+				if(decrypt) {
+					in.close();
 					throw new ParseException("Não gerar nova chave para desencriptar...");
+				}
 			    System.out.println("Gerando as chaves");
 			    key.autoBuildKeys();
 			    key.savePublicKey(pubk_filename);
