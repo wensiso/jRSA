@@ -15,6 +15,7 @@ import java.util.Scanner;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
@@ -35,6 +36,8 @@ import br.com.fat.jrsa.RSA;
  */
 public class Main {
 
+	static String prog = "jRSA";
+	
 	static String pubk_filename = "./data/keys/pubk.txt";
 	static String privk_filename = "./data/keys/privk.txt";
 			
@@ -44,12 +47,13 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		
-		String prog = "jRSA - Uma ferramenta educacional para ensino do algoritmo RSA\n";
-		String usage = "Modo de uso:\n"
-				+ "\tjava jRSA -e <open_file> -o <encrypted_file> [-k] [-v]\n"
-				+ "\tjava jRSA -d <encrypted_file> -o <open_file> [-k] [-v]";
+		String progfull = prog + " - Uma ferramenta educacional para ensino do algoritmo RSA\n";
 		
-		System.out.println(prog);
+		String usage_str = "\njava jRSA -e <arquivo_em_texto_aberto> -o <saída_encriptada> [-k] [-v]\n"
+				+ "java jRSA -d <arquivo_encriptado> -o <saída_em_texto_aberto> [-k] [-v]\n"
+				+ "\n";
+		
+		System.out.println(progfull);
 		
 		String msg_filename = "./data/sample/message.txt";
 		String encrypt_filename = "./data/sample/encrypt_msg.dat";
@@ -63,21 +67,21 @@ public class Main {
 		
 		Option enc = Option.builder("e")
 			    .longOpt( "encrypt" )
-			    .desc( "arquivo para encriptar"  )
+			    .desc( "arquivo aberto para ser encriptado"  )
 			    .hasArg()
 			    .argName( "msg_filename" )
 			    .build();
 		
 		Option desenc = Option.builder("d")
 			    .longOpt( "desencrypt" )
-			    .desc( "arquivo para desencriptar"  )
+			    .desc( "arquivo encriptado para ser decifrado"  )
 			    .hasArg()
 			    .argName( "encrypt_filename" )
 			    .build();
 		
 		Option output = Option.builder("o")
 			    .longOpt( "output" )
-			    .desc( "arquivo de saída"  )
+			    .desc( "arquivo de destino/saída"  )
 			    .hasArg()
 			    .argName( "dest_filename" )
 			    .build();
@@ -87,8 +91,8 @@ public class Main {
 		options.addOption(output);
 		
 		options.addOption("k", false, "gera um novo par de chaves");
-		options.addOption("v", false, "imprime arquivo aberto");
-		
+		options.addOption("v", false, "imprime o arquivo aberto");
+	
 		RSAKey key = new RSAKey();
 				
 		try {
@@ -102,11 +106,11 @@ public class Main {
 				encrypt = true;
 			} else if(cmd.hasOption("d")) {
 				encrypt_filename = cmd.getOptionValue("d");
-				System.out.println("Arquivo para encriptar: " + encrypt_filename);
+				System.out.println("Arquivo para decifrar: " + encrypt_filename);
 				decrypt = true;
 			} else {
 				in.close();
-				throw new ParseException("Arquivo de origem não informado");
+				throw new ParseException("Arquivo não informado");
 			}
 			
 			if(cmd.hasOption("o")) {
@@ -162,9 +166,9 @@ public class Main {
 			System.out.println("\nTempo decorrido: " + (end - begin) + " ms");
 			
 		} catch (ParseException e) {
-			System.out.println(e.getMessage());
-			System.out.println(usage + "\n");
-			e.printStackTrace();
+			System.err.println(e.getMessage());
+			HelpFormatter formatter = new HelpFormatter();
+			formatter.printHelp(usage_str, options);
 		}
 	}
 	
