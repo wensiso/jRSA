@@ -73,7 +73,7 @@ public class Main {
 			    .build();
 		
 		Option desenc = Option.builder("d")
-			    .longOpt( "desencrypt" )
+			    .longOpt( "decrypt" )
 			    .desc( "arquivo encriptado para ser decifrado"  )
 			    .hasArg()
 			    .argName( "encrypt_filename" )
