@@ -10,8 +10,8 @@ public class RSAKey {
 	public static Long MAX = 512L;
 	
 //	public static Long MIN = 3L;
-//	public static Long MAX = 23L;
-	
+//	public static Long MAX = 6L;
+//	
 	private Long p, q, n, z, e, d;
 	private Long[] pubkey, privkey;
 	
@@ -73,7 +73,8 @@ public class RSAKey {
 	 * @return
 	 */
 	public boolean setPubKey(Long n, Long e) {
-		if ((e <= n) && !Numbers.isPrime(e)) {
+		System.out.println(e <= n);
+		if ((e <= n) /* && TODO Testar se é primo entre si */) {
 			this.n = n;
 			this.e = e;
 			this.pubkey = new Long[2];

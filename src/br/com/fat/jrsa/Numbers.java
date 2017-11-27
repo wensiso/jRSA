@@ -36,10 +36,8 @@ public class Numbers {
 	 */
 	public static Long getRandomPrime(Long min, Long max) {
 		Long n = ThreadLocalRandom.current().nextLong(min, max);
-	
 		while(!isPrime(n))
 			n = ThreadLocalRandom.current().nextLong(min, max);
-		
 		return n;
 	}
 

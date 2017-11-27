@@ -86,9 +86,17 @@ public class Main {
 			    .argName( "dest_filename" )
 			    .build();
 		
+		Option test = Option.builder("t")
+			    .longOpt( "test" )
+			    .desc( "testa o programa, sem utilizar arquivos"  )
+			    .hasArg()
+			    .argName( "message" )
+			    .build();
+		
 		options.addOption(enc);
 		options.addOption(desenc);
 		options.addOption(output);
+		options.addOption(test);
 		
 		options.addOption("k", false, "gera um novo par de chaves");
 		options.addOption("v", false, "imprime o arquivo aberto");
@@ -99,6 +107,16 @@ public class Main {
 			Scanner in = new Scanner(System.in);
 			String useropt = "n";
 			CommandLine cmd = parser.parse(options, args);
+			
+			if(cmd.hasOption("t")) {
+				String test_str = cmd.getOptionValue("t");
+				System.out.println("Mensagem de teste: " + test_str);
+				key.autoBuildKeys();
+				System.out.println(key);
+				RSA tester = new RSA(key);
+				tester.testAll(test_str);
+				System.exit(0);
+			}
 			
 			if(cmd.hasOption("e")){
 				msg_filename = cmd.getOptionValue("e");
@@ -141,14 +159,14 @@ public class Main {
 					System.out.println("Informe a chave pública (n, e): ");
 					Long n = in.nextLong();
 					Long e = in.nextLong();
-					key.setPubKey(n, e);
-					System.out.println("Sua chave pública: (" + n + ", " + e + ")\n");
+					boolean sucess = key.setPubKey(n, e);
+					System.out.println("Sua chave pública: (" + n + ", " + e + ") " + sucess + "\n");
 				} else if (decrypt) {
 					System.out.println("Informe a chave privada (n, d): ");
 					Long n = in.nextLong();
 					Long d = in.nextLong();
-					key.setPrivKey(n, d);
-					System.out.println("Sua chave privada: (" + n + ", " + d + ")\n");
+					boolean sucess = key.setPrivKey(n, d);
+					System.out.println("Sua chave privada: (" + n + ", " + d + ") " + sucess + "\n");
 				}
 			}
 			
@@ -162,7 +180,6 @@ public class Main {
 			else if (decrypt)
 				decode(encrypt_filename, out_filename, encoder);
 			long end =  System.currentTimeMillis();
-			
 			System.out.println("\nTempo decorrido: " + (end - begin) + " ms");
 			
 		} catch (ParseException e) {

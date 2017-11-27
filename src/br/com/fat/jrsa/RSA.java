@@ -67,10 +67,10 @@ public class RSA {
 		
 		String decod_teste = this.decodeStr(enc);
 		System.out.println("\n\nString decodificada: \n" + decod_teste);
-		char[] tmp2 = test_str.toCharArray();
+		char[] tmp2 = decod_teste.toCharArray();
 		for(int i=0; i<tmp2.length; ++i)
 			System.out.print((long) tmp2[i] + ",");
-		System.out.println("--------------------------------\n");
+		System.out.println("\n--------------------------------\n");
 	}
  
 }
