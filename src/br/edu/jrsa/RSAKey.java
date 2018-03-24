@@ -1,4 +1,4 @@
-package br.com.fat.jrsa;
+package br.edu.jrsa;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;

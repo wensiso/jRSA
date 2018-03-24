@@ -1,4 +1,4 @@
-package br.com.fat.jrsa;
+package br.edu.jrsa;
 
 import java.util.concurrent.ThreadLocalRandom;
 

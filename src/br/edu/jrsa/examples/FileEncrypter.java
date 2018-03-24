@@ -1,3 +1,5 @@
+package br.edu.jrsa.examples;
+
 import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -20,8 +22,8 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import br.com.fat.jrsa.RSAKey;
-import br.com.fat.jrsa.RSA;
+import br.edu.jrsa.RSA;
+import br.edu.jrsa.RSAKey;
 
 /**
  * 
@@ -34,12 +36,14 @@ import br.com.fat.jrsa.RSA;
  * @author wendell
  *
  */
-public class Main {
+public class FileEncrypter {
 
-	static String prog = "jRSA";
+	static String prog = "jRSA File Encrypter";
 	
-	static String pubk_filename = "./data/keys/pubk.txt";
-	static String privk_filename = "./data/keys/privk.txt";
+//	static String rel_path = "../../../../";
+	static String rel_path = "";
+	static String pubk_filename = rel_path + "data/keys/pubk.txt";
+	static String privk_filename = rel_path + "data/keys/privk.txt";
 			
 	/**
 	 * Main
@@ -47,17 +51,17 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		
-		String progfull = prog + " - Uma ferramenta educacional para ensino do algoritmo RSA\n";
+		String progfull = prog + " - An educational tool for teaching the RSA algorithm\n";
 		
-		String usage_str = "\njava jRSA -e <arquivo_em_texto_aberto> -o <saída_encriptada> [-k] [-v]\n"
-				+ "java jRSA -d <arquivo_encriptado> -o <saída_em_texto_aberto> [-k] [-v]\n"
+		String usage_str = "\njava FileEncrypter -e <plain_text_file> -o <encrypted_file> [-k] [-v]\n"
+				+ "java FileEncrypter -d <encrypted_file> -o <plain_text_file> [-k] [-v]\n"
 				+ "\n";
 		
 		System.out.println(progfull);
 		
-		String msg_filename = "./data/sample/message.txt";
-		String encrypt_filename = "./data/sample/encrypt_msg.dat";
-		String out_filename = "./data/sample/decod_message.txt";
+		String msg_filename = rel_path + "data/sample/message.txt";
+		String encrypt_filename = rel_path + "data/sample/encrypt_msg.dat";
+		String out_filename = rel_path + "data/sample/decod_message.txt";
 		
 		boolean encrypt = false;
 		boolean decrypt = false;
@@ -67,28 +71,28 @@ public class Main {
 		
 		Option enc = Option.builder("e")
 			    .longOpt( "encrypt" )
-			    .desc( "arquivo aberto para ser encriptado"  )
+			    .desc( "plain text file"  )
 			    .hasArg()
 			    .argName( "msg_filename" )
 			    .build();
 		
 		Option desenc = Option.builder("d")
 			    .longOpt( "decrypt" )
-			    .desc( "arquivo encriptado para ser decifrado"  )
+			    .desc( "encrypted file"  )
 			    .hasArg()
 			    .argName( "encrypt_filename" )
 			    .build();
 		
 		Option output = Option.builder("o")
 			    .longOpt( "output" )
-			    .desc( "arquivo de destino/saída"  )
+			    .desc( "output filename"  )
 			    .hasArg()
 			    .argName( "dest_filename" )
 			    .build();
 		
 		Option test = Option.builder("t")
 			    .longOpt( "test" )
-			    .desc( "testa o programa, sem utilizar arquivos"  )
+			    .desc( "test the program, without write files"  )
 			    .hasArg()
 			    .argName( "message" )
 			    .build();
@@ -98,8 +102,8 @@ public class Main {
 		options.addOption(output);
 		options.addOption(test);
 		
-		options.addOption("k", false, "gera um novo par de chaves");
-		options.addOption("v", false, "imprime o arquivo aberto");
+		options.addOption("k", false, "creates a new RSA key pair");
+		options.addOption("v", false, "show plain text file on terminal");
 	
 		RSAKey key = new RSAKey();
 				
@@ -110,7 +114,7 @@ public class Main {
 			
 			if(cmd.hasOption("t")) {
 				String test_str = cmd.getOptionValue("t");
-				System.out.println("Mensagem de teste: " + test_str);
+				System.out.println("Test message: " + test_str);
 				key.autoBuildKeys();
 				System.out.println(key);
 				RSA tester = new RSA(key);
@@ -120,53 +124,53 @@ public class Main {
 			
 			if(cmd.hasOption("e")){
 				msg_filename = cmd.getOptionValue("e");
-				System.out.println("Arquivo para encriptar: " + msg_filename);
+				System.out.println("Plain text file: " + msg_filename);
 				encrypt = true;
 			} else if(cmd.hasOption("d")) {
 				encrypt_filename = cmd.getOptionValue("d");
-				System.out.println("Arquivo para decifrar: " + encrypt_filename);
+				System.out.println("Encrypted file: " + encrypt_filename);
 				decrypt = true;
 			} else {
 				in.close();
-				throw new ParseException("Arquivo não informado");
+				throw new ParseException("Please inform an input file!");
 			}
 			
 			if(cmd.hasOption("o")) {
 				out_filename = cmd.getOptionValue("o");
-				System.out.println("Arquivo de destino: " + out_filename + "\n");
+				System.out.println("Output file: " + out_filename + "\n");
 			} else {
 				in.close();
-				throw new ParseException("Arquivo de destino não informado");
+				throw new ParseException("Please inform output file!");
 			}
 			
 			if(cmd.hasOption("k")) {
 				if(decrypt) {
 					in.close();
-					throw new ParseException("Não gerar nova chave para desencriptar...");
+					throw new ParseException("You cannot create a RSA key pair when decrypting files...");
 				}
-			    System.out.println("Gerando as chaves");
+			    System.out.println("Creating RSA key pair...");
 			    key.autoBuildKeys();
 			    key.savePublicKey(pubk_filename);
 				key.savePrivateKey(privk_filename);
 				System.out.println(key);
 				
-				System.out.println("Reutilizar a chave recem-gerada? (S/N) ");
+				System.out.println("Reuse the new RSA key pair? (Y/N) ");
 				useropt = in.nextLine();
 			} 
 			if(useropt.startsWith("n") || useropt.startsWith("N")) {
 				if (encrypt) {
 					// ask for keys
-					System.out.println("Informe a chave pública (n, e): ");
+					System.out.println("Enter public key (n, e): ");
 					Long n = in.nextLong();
 					Long e = in.nextLong();
 					boolean sucess = key.setPubKey(n, e);
-					System.out.println("Sua chave pública: (" + n + ", " + e + ") " + sucess + "\n");
+					System.out.println("Your public key: (" + n + ", " + e + ") " + sucess + "\n");
 				} else if (decrypt) {
-					System.out.println("Informe a chave privada (n, d): ");
+					System.out.println("Entre your private key (n, d): ");
 					Long n = in.nextLong();
 					Long d = in.nextLong();
 					boolean sucess = key.setPrivKey(n, d);
-					System.out.println("Sua chave privada: (" + n + ", " + d + ") " + sucess + "\n");
+					System.out.println("Your private key: (" + n + ", " + d + ") " + sucess + "\n");
 				}
 			}
 			
@@ -180,7 +184,7 @@ public class Main {
 			else if (decrypt)
 				decode(encrypt_filename, out_filename, encoder);
 			long end =  System.currentTimeMillis();
-			System.out.println("\nTempo decorrido: " + (end - begin) + " ms");
+			System.out.println("\nTime spent: " + (end - begin) + " ms");
 			
 		} catch (ParseException e) {
 			System.err.println(e.getMessage());
@@ -198,16 +202,16 @@ public class Main {
 	 */
 	private static void encrypt(String msg_filename, String encrypt_filename, RSA encoder) {
 		
-		System.out.println("\nAbrindo arquivo da mensagem original: " + msg_filename);
+		System.out.println("\nOpenning plain text file: " + msg_filename);
 		
 		try {
 			
 			String msg = new String(Files.readAllBytes(Paths.get(msg_filename)));
 						
-			System.out.println("Encriptando arquivo...");
+			System.out.println("Encrypting file...");
 			Long[] enc = encoder.encodeStr(msg);
 
-			System.out.println("Salvando arquivo encriptado em: " + encrypt_filename);		
+			System.out.println("Saving encrypted file: " + encrypt_filename);		
 			FileOutputStream out = new FileOutputStream(new File(encrypt_filename));
 			DataOutputStream writer = new DataOutputStream(out);
 			for(Long c: enc) {
@@ -217,7 +221,7 @@ public class Main {
 			writer.close();
 
 		} catch (IOException e) {
-			System.err.println("\nErro: " + e.getMessage());
+			System.err.println("\nError: " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -231,7 +235,7 @@ public class Main {
 	 */
 	private static void decode(String encrypt_filename, String msgdec_filename, RSA decoder) {
 
-		System.out.println("\nAbrindo arquivo encriptado: " + encrypt_filename);
+		System.out.println("\nOpening encrypted file: " + encrypt_filename);
 
 		try {
 			FileInputStream in = new FileInputStream(new File(encrypt_filename));
@@ -244,19 +248,19 @@ public class Main {
 			reader.close();
 			Long[] enc = clist.toArray(new Long[0]);
 			
-			System.out.println("Desencriptando arquivo...");
+			System.out.println("Decrypting file...");
 			String msgdec = decoder.decodeStr(enc);
 
-			System.out.println("Salvando arquivo desencriptado em: " + msgdec_filename);
+			System.out.println("Saving decrypted file: " + msgdec_filename);
 			BufferedWriter out = new BufferedWriter(new FileWriter(msgdec_filename));
 			out.write(msgdec);
 			out.close();
 
 		} catch (FileNotFoundException e) {
-			System.err.println("\nErro: " + e.getMessage());
+			System.err.println("\nFile not found: " + e.getMessage());
 			e.printStackTrace();
 		} catch (IOException e) {
-			System.err.println("\nErro: " + e.getMessage());
+			System.err.println("\nIO Error: " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
