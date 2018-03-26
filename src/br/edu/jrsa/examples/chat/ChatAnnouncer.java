@@ -7,39 +7,35 @@ import java.util.Observable;
 
 public class ChatAnnouncer extends Observable implements Runnable {
 	
-	private String id;
-	private String chat_addr;
-	private int chat_port;
-	
+	private boolean canrun;
 	private DatagramSocket announceSocket;
-	
-	public ChatAnnouncer(String id, String chat_addr, int chat_port) {
-		this.id = id;
-		this.chat_addr = chat_addr;
-		this.chat_port = chat_port;
-	}
-	
+
     private void sendMessages() throws Exception {
         // Get the address that we are going to connect to.
         InetAddress addr = InetAddress.getByName(EncryptedChat.SERVICE_ADDR);        
         announceSocket = new DatagramSocket();
         
         String msg = "Encrypted Chat 1.0\r\n"
-        		+ "id: " + this.id + "\r\n"
-        		+ "host: " + this.chat_addr + "\r\n"
-        		+ "port: " + this.chat_port + "\r\n\r\n";
+        		+ "id: " + EncryptedChat.myself.getId() + "\r\n"
+        		+ "host: " + EncryptedChat.myself.getAddr() + "\r\n"
+        		+ "port: " + EncryptedChat.myself.getPort() + "\r\n\r\n";
        
         DatagramPacket msgPacket = new DatagramPacket(msg.getBytes(), msg.getBytes().length, addr, EncryptedChat.SERVICE_PORT);
         
-        while(true) {
+        while(this.canrun) {
         	announceSocket.send(msgPacket);
-        	Thread.sleep(1000);
+        	try {
+        		Thread.sleep(100);
+			} catch (InterruptedException e) {
+				this.canrun = false;
+			}
         }
     }
 
 	@Override
 	public void run() {
 		try {
+			this.canrun = true;
 			this.sendMessages();
 		} catch (Exception e) {
 			e.printStackTrace();
