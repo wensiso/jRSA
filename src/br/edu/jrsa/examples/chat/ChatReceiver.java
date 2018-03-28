@@ -55,7 +55,6 @@ class ChatReceiver extends Observable implements Runnable {
 			System.out.println(msg);
 			System.out.print(">");
 		}
-		System.out.println("End of chat");
 	}
 
 	private boolean parseFirstMessage(String first_msg) {

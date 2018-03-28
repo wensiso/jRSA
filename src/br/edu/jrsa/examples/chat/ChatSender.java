@@ -7,7 +7,11 @@ class ChatSender {
 	
 	private String chat_addr;
 	private int chat_port;
+	
+	private BufferedReader inFromUser;
+	
 	private Socket clientSocket;
+	private DataOutputStream outToChat;
 		
     public ChatSender(String chat_addr, int chat_port) {
 		super();
@@ -16,21 +20,20 @@ class ChatSender {
 	}
 
 	public void start() {
-        BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
+        inFromUser = new BufferedReader(new InputStreamReader(System.in));
 		try {
 			clientSocket = new Socket(this.chat_addr, this.chat_port);
 			if (clientSocket.isConnected())
 				System.out.println("Conected to " + this.chat_addr + ":" + this.chat_port);
 
-			DataOutputStream outToChat = new DataOutputStream(clientSocket.getOutputStream());
-			
-			this.sendFirstMessage(outToChat);
+			outToChat = new DataOutputStream(clientSocket.getOutputStream());
+			this.sendFirstMessage();
 			
 			String msg = "";
-			while (!msg.equalsIgnoreCase(EncryptedChat.SAIR) || !clientSocket.isClosed()) {
+			while (!msg.equalsIgnoreCase(EncryptedChat.SAIR)) {
 				System.out.print("> ");
 				msg = inFromUser.readLine();
-				outToChat.writeBytes("[" + EncryptedChat.myself.getId() + "]: " + msg + '\n');
+				this.send(msg);
 			}
 			
 		} catch (UnknownHostException e) {
@@ -39,16 +42,18 @@ class ChatSender {
 			e.printStackTrace();
 		}
 	}
+	
+	private void send(String msg) throws IOException {
+		outToChat.writeBytes("[" + EncryptedChat.myself.getId() + "]: " + msg + '\n');
+	}
 
-	private void sendFirstMessage(DataOutputStream outToChat) throws IOException {
+	private void sendFirstMessage() throws IOException {
 		String firstMessage = EncryptedChat.myself.getId() + ":" + EncryptedChat.myself.getPort();
 		outToChat.writeBytes(firstMessage + "\n");
 	}
 
 	public void sendReject() {
 		try {
-			clientSocket = new Socket(this.chat_addr, this.chat_port);
-			DataOutputStream outToChat = new DataOutputStream(clientSocket.getOutputStream());
 			outToChat.writeBytes("[" + EncryptedChat.myself.getId() + "]: " + EncryptedChat.SAIR + '\n');
 		} catch (IOException e) {
 			e.printStackTrace();
