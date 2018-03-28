@@ -70,7 +70,7 @@ public class EncryptedChat implements Observer {
 		String statement = "";
 		String command = "";
 		do {
-			if (this.chatting == false) {				
+			if (!this.chatting) {				
 				System.out.println(
 						"Type 'search' to find other users. Type 'chat <<user-id>>' to chat with a user.\n Type 'out' to close a chat or this program.");
 				System.out.print("> ");
@@ -80,7 +80,7 @@ public class EncryptedChat implements Observer {
 				statement = inFromUser.readLine();
 				command = statement.split(" ")[0];
 
-				if (this.chatting == true) {
+				if (this.chatting) {
 					if (command.equalsIgnoreCase(EncryptedChat.NO) || command.equalsIgnoreCase(EncryptedChat.NO_2)) {
 						System.out.println("Rejecting chat... ");
 						sender.sendReject();
@@ -90,6 +90,7 @@ public class EncryptedChat implements Observer {
 							annoucerThread.interrupt();
 						}
 						sender.start();
+						this.chatting = false; // Ao final do chat
 						continue;
 					}
 				}
@@ -116,7 +117,7 @@ public class EncryptedChat implements Observer {
 					sender = new ChatSender(dst_addr, dst_port);
 					this.chatting = true;
 					sender.start();
-					this.chatting = false;
+					this.chatting = false; // Ao final do chat
 				} else {
 					System.out.println("Command not found!");
 				}
@@ -152,7 +153,6 @@ public class EncryptedChat implements Observer {
 					System.out.println("End of chat. Type <enter> to continue... ");
 					sender.sendReject();
 					this.chatting = false;
-					
 					Thread annoucerThread = new Thread(this.announcer);
 					annoucerThread.start();
 				}	

@@ -39,7 +39,8 @@ class ChatSender {
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+			//Quando recebe o sair, dispara essa excecao, mas o prog continua de boa
+			//e.printStackTrace();
 		}
 	}
 	
@@ -54,7 +55,7 @@ class ChatSender {
 
 	public void sendReject() {
 		try {
-			outToChat.writeBytes("[" + EncryptedChat.myself.getId() + "]: " + EncryptedChat.SAIR + '\n');
+			this.send(EncryptedChat.SAIR);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
