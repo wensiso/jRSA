@@ -12,7 +12,7 @@ public class EncryptedChat implements Observer {
 	final static String SERVICE_ADDR = "224.0.0.3";
     final static int SERVICE_PORT = 3737;
     
-    final static String SAIR = "sair";
+    final static String SAIR = "out";
     final static String CHAT = "chat";
     final static String SEARCH = "search";
 	private static final String NO = "n";
@@ -130,6 +130,7 @@ public class EncryptedChat implements Observer {
 		} while (!command.equalsIgnoreCase(EncryptedChat.SAIR));
 		
 		System.out.println("Fim do programa...");
+		System.exit(0);
     }
 	
 	/**
