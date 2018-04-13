@@ -18,7 +18,7 @@ public class RSA {
 	 * @param str_msg
 	 * @return a array of encrypted chars
 	 */
-	public Long[] encodeStr(String str_msg) {
+	public Long[] encryptStr(String str_msg) {
 		BigInteger n = new BigInteger(this.pubkey[0].toString());
 		BigInteger e = new BigInteger(this.pubkey[1].toString());
 		
@@ -34,11 +34,37 @@ public class RSA {
 	}
 	
 	/**
+	 * Encrypt a string  
 	 * 
-	 * @param enc array of enrypted chars
+	 * @param str_msg the open text
+	 * @param sep the separator of chars
+	 * @return a string representing the array of encrypted chars
+	 */
+	public String encryptAndConvertStr(String str_msg, char sep) {
+		Long[] c = this.encryptStr(str_msg);
+		String cstr = "";
+		for (Long n: c) {
+			cstr += n.toString() + sep;
+		}
+		return cstr.substring(0, cstr.length()-1);
+	}
+	
+	/**
+	 * Encrypt a string  
+	 * 
+	 * @param str_msg the open text
+	 * @return a string representing the array of encrypted chars
+	 */
+	public String encryptAndConvertStr(String str_msg) {
+		return this.encryptAndConvertStr(str_msg, ',');
+	}
+	
+	/**
+	 * 
+	 * @param enc array of encrypted chars in Long format
 	 * @return a String from decrypted chars
 	 */
-	public String decodeStr(Long[] enc) {
+	public String decryptLong(Long[] enc) {
 		BigInteger n = new BigInteger(this.privkey[0].toString());
 		BigInteger d = new BigInteger(this.privkey[1].toString());
 
@@ -52,9 +78,31 @@ public class RSA {
 		return new String(msg);
 	}
 	
+	/**
+	 * 
+	 * @param enc array of encrypted chars in str format
+	 * @param sep the separator
+	 * @return a String from decrypted chars
+	 */
+	public String decryptStr(String enc, char sep) {
+		String[] enc_arr = enc.split("" + sep);
+		Long [] enc_long = new Long[enc_arr.length];
+		for (int i=0; i<enc_arr.length; ++i) {
+			enc_long[i] = Long.parseLong(enc_arr[i]);
+		}
+		return this.decryptLong(enc_long);
+	}
+	
+	/**
+	 * @param enc array of encrypted chars in str format
+	 * @return a String from decrypted chars
+	 */
+	public String decryptStr(String enc) {
+		return this.decryptStr(enc, ',');
+	}
 	
 	public void testAll (String test_str) {
-		Long[] enc = this.encodeStr(test_str);
+		Long[] enc = this.encryptStr(test_str);
 		
 		System.out.println("\nString original: \n"+ test_str);
 		char[] tmp = test_str.toCharArray();
@@ -65,7 +113,7 @@ public class RSA {
 		for(int i=0; i<enc.length; ++i)
 			System.out.print(enc[i] + ",");
 		
-		String decod_teste = this.decodeStr(enc);
+		String decod_teste = this.decryptLong(enc);
 		System.out.println("\n\nString decodificada: \n" + decod_teste);
 		char[] tmp2 = decod_teste.toCharArray();
 		for(int i=0; i<tmp2.length; ++i)

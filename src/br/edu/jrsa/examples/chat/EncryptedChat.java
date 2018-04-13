@@ -16,6 +16,8 @@ public class EncryptedChat implements Observer {
     final static String SAIR = "out";
     final static String CHAT = "chat";
     final static String SEARCH = "search";
+    final static String ENCRYPTED = "enc";
+    
 	private static final String NO = "n";
 	private static final String NO_2= "no";
     
@@ -38,7 +40,7 @@ public class EncryptedChat implements Observer {
 	private void startChat () {
 		
 		Random random = new Random(System.currentTimeMillis());
-		int chat_port = random.nextInt(10000) + 10000; //randint from 10000 to 20000
+		int chat_port = random.nextInt(1000) + 50000; //randint from 50000 to 51000
 		
 		inFromUser = new BufferedReader(new InputStreamReader(System.in));
 		System.out.print("Enter a username: ");

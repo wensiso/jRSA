@@ -50,16 +50,20 @@ class ChatReceiver extends Observable implements Runnable {
 			msg = inFromChat.readLine();
 			text = msg.split(":")[1].trim();
 			
-			if(text.startsWith("enc")) {
-				//TODO Desencriptar
-			}
+			String inmsg = new String();
+			if(text.startsWith(EncryptedChat.ENCRYPTED)) {
+				String orig = EncryptedChat.myself.getEncoder().decryptStr(text.split(" ")[1]);
+				inmsg = msg.split(":")[0].trim() + " " + orig;
+				text = orig;
+			} else
+				inmsg = msg;
 			
 			if(text.equalsIgnoreCase(EncryptedChat.SAIR)) {
 				this.setChanged();
 				this.notifyObservers(text);
 				break;
 			}
-			System.out.println(msg);
+			System.out.println(inmsg);
 			System.out.print(">");
 		}
 	}

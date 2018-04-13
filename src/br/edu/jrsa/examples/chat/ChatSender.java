@@ -37,7 +37,7 @@ class ChatSender {
 			clientSocket = new Socket(this.chat_addr, this.chat_port);
 			if (clientSocket.isConnected())
 				System.out.println("Connected to " + this.chat_addr + ":" + this.chat_port);
-
+			
 			outToChat = new DataOutputStream(clientSocket.getOutputStream());
 			this.sendFirstMessage();
 			
@@ -46,12 +46,10 @@ class ChatSender {
 				System.out.print("> ");
 				msg = inFromUser.readLine();
 				
-				if(this.user != null) {
-					; //TODO encriptar...
-					
-				}
-				
-				this.send(msg);
+				if(this.user != null)
+					this.sendEncrypted(msg);
+				else
+					this.send(msg);
 			}
 			
 		} catch (UnknownHostException e) {
@@ -64,6 +62,12 @@ class ChatSender {
 	
 	private void send(String msg) throws IOException {
 		outToChat.writeBytes("[" + EncryptedChat.myself.getId() + "]: " + msg + '\n');
+	}
+	
+	private void sendEncrypted(String msg) throws IOException {
+		String c = this.user.getEncoder().encryptAndConvertStr(msg);
+		String outmsg = EncryptedChat.ENCRYPTED + " " + c;
+		this.send(outmsg);
 	}
 
 	private void sendFirstMessage() throws IOException {

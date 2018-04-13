@@ -209,7 +209,7 @@ public class FileEncrypter {
 			String msg = new String(Files.readAllBytes(Paths.get(msg_filename)));
 						
 			System.out.println("Encrypting file...");
-			Long[] enc = encoder.encodeStr(msg);
+			Long[] enc = encoder.encryptStr(msg);
 
 			System.out.println("Saving encrypted file: " + encrypt_filename);		
 			FileOutputStream out = new FileOutputStream(new File(encrypt_filename));
@@ -249,7 +249,7 @@ public class FileEncrypter {
 			Long[] enc = clist.toArray(new Long[0]);
 			
 			System.out.println("Decrypting file...");
-			String msgdec = decoder.decodeStr(enc);
+			String msgdec = decoder.decryptLong(enc);
 
 			System.out.println("Saving decrypted file: " + msgdec_filename);
 			BufferedWriter out = new BufferedWriter(new FileWriter(msgdec_filename));
