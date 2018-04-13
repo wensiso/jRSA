@@ -5,6 +5,8 @@ import java.io.InputStreamReader;
 import java.net.*;
 import java.util.Observable;
 
+import br.edu.jrsa.RSAKey;
+
 class ChatReceiver extends Observable implements Runnable {
 
 	private int chat_port;
@@ -47,6 +49,11 @@ class ChatReceiver extends Observable implements Runnable {
 		while (true) {
 			msg = inFromChat.readLine();
 			text = msg.split(":")[1].trim();
+			
+			if(text.startsWith("enc")) {
+				//TODO Desencriptar
+			}
+			
 			if(text.equalsIgnoreCase(EncryptedChat.SAIR)) {
 				this.setChanged();
 				this.notifyObservers(text);
@@ -60,10 +67,17 @@ class ChatReceiver extends Observable implements Runnable {
 	private boolean parseFirstMessage(String first_msg) {
 		try {
 			String username = first_msg.split("@")[0];
-			String fullhost = first_msg.split("@")[1];
+			String fullhost = first_msg.split("@")[1].split(" ")[0];
 			String addr = fullhost.split(":")[0];
 			int port = Integer.parseInt(fullhost.split(":")[1]);
-			ChatUser user = new ChatUser(username, addr, addr, port);
+	
+			String skey = first_msg.split(" ")[1];
+			Long n = Long.parseLong(skey.split(",")[0]);
+			Long e = Long.parseLong(skey.split(",")[1]);
+			RSAKey pubkey = new RSAKey();
+			pubkey.setPubKey(n, e);
+			
+			ChatUser user = new ChatUser(username, addr, addr, port, pubkey);
 			this.setChanged();
 			this.notifyObservers(user);
 		} catch (Exception e) {

@@ -56,9 +56,18 @@ public class ChatDiscoverer extends Thread {
 		System.out.println("----------------------");
 		System.out.println("Online users: ");
 		for (ChatUser user: this.chats.keySet()) {
-			System.out.println("\t[" + user.getUsername() + "] " + user.getId() + ":" + user.getPort());
+			if(this.chats.get(user) == true)
+				System.out.println("\t[" + user.getUsername() + "] " + user.getId() + ":" + user.getPort());
 		}
 		System.out.println("----------------------");
+	}
+	
+	public ChatUser getUser(String id) {
+		for (ChatUser user: this.chats.keySet()) {
+			if(user.getId().equals(id))
+				return user;
+		}
+		return null;
 	}
 	
 	@Override

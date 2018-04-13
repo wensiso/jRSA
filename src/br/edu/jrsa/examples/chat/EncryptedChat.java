@@ -7,6 +7,7 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Random;
 
+
 public class EncryptedChat implements Observer {
 
 	final static String SERVICE_ADDR = "224.0.0.3";
@@ -54,7 +55,7 @@ public class EncryptedChat implements Observer {
 			while (!receiver.isRunning())
 				Thread.sleep(100);
 
-			myself = new ChatUser(username, receiver.getHostAddress(), receiver.getHostAddress(), chat_port);
+			myself = new ChatUser(username + "@" + receiver.getHostAddress(), receiver.getHostAddress(), chat_port);
 			System.out.println("Your ID is: " + myself.getId() + ". Your port is " + chat_port);
 
 		} catch (IOException e) {
@@ -140,15 +141,17 @@ public class EncryptedChat implements Observer {
 	public void update(Observable o, Object arg) {
 		
 		if (o instanceof ChatReceiver) {
-			if (arg instanceof ChatUser && !this.chatting) {
-				
+			if (arg instanceof ChatUser) {
 				ChatUser user = (ChatUser) arg;
-				System.out.println("Chat request received from " + user.getId() + ":" + user.getPort() + ". Do you accept? (Y/N)");
-				sender = new ChatSender(user.getAddr(), user.getPort());
-				this.chatting = true;
+				if (!this.chatting) {
+					System.out.println("Chat request received from " + user.getId() + ":" + user.getPort() + ". Do you accept? (Y/N)");
+					sender = new ChatSender(user.getAddr(), user.getPort(), user);
+					this.chatting = true;
+				} else {
+					sender.setUser(user);
+				}
 				
 			} else if (arg instanceof String) {
-				
 				String text = (String) arg;
 				if(text.equalsIgnoreCase(EncryptedChat.SAIR) && this.chatting) {	
 					System.out.println("End of chat. Type <enter> to continue... ");
@@ -168,6 +171,7 @@ public class EncryptedChat implements Observer {
 	 * @throws Exception 
 	 */
 	public static void main(String[] args) {
+		
 		EncryptedChat chat = new EncryptedChat();
 		chat.startChat();
 	}

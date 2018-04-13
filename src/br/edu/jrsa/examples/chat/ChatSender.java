@@ -12,11 +12,23 @@ class ChatSender {
 	
 	private Socket clientSocket;
 	private DataOutputStream outToChat;
+	private ChatUser user;
 		
     public ChatSender(String chat_addr, int chat_port) {
 		super();
 		this.chat_addr = chat_addr;
 		this.chat_port = chat_port;
+	}
+    
+    public ChatSender(String chat_addr, int chat_port, ChatUser user) {
+		super();
+		this.chat_addr = chat_addr;
+		this.chat_port = chat_port;
+		this.user = user;
+	}
+       
+	public void setUser(ChatUser user) {
+		this.user = user;
 	}
 
 	public void start() {
@@ -24,7 +36,7 @@ class ChatSender {
 		try {
 			clientSocket = new Socket(this.chat_addr, this.chat_port);
 			if (clientSocket.isConnected())
-				System.out.println("Conected to " + this.chat_addr + ":" + this.chat_port);
+				System.out.println("Connected to " + this.chat_addr + ":" + this.chat_port);
 
 			outToChat = new DataOutputStream(clientSocket.getOutputStream());
 			this.sendFirstMessage();
@@ -33,6 +45,12 @@ class ChatSender {
 			while (!msg.equalsIgnoreCase(EncryptedChat.SAIR)) {
 				System.out.print("> ");
 				msg = inFromUser.readLine();
+				
+				if(this.user != null) {
+					; //TODO encriptar...
+					
+				}
+				
 				this.send(msg);
 			}
 			
@@ -50,6 +68,7 @@ class ChatSender {
 
 	private void sendFirstMessage() throws IOException {
 		String firstMessage = EncryptedChat.myself.getId() + ":" + EncryptedChat.myself.getPort();
+		firstMessage += " " + EncryptedChat.myself.getStrPublicKey();
 		outToChat.writeBytes(firstMessage + "\n");
 	}
 
