@@ -11,20 +11,20 @@ public class Numbers {
 	 * @return True, if n is a prime number, or False otherwise
 	 */
 	public static boolean isPrime(Long n) {
-		boolean isprime;
-		if((n == 2) || (n!=1 && n%2 == 1)) 
-			isprime = true;
-		else
-			isprime = false;
+		
+		if (n == 2)
+			return true;
+		
+		if ((n <= 1) || (n%2)==0)
+			return false;
 		
 		int div = 3;
-		while(div <= Math.sqrt(n) && isprime) {
+		while(div <= Math.sqrt(n)) {
 			if (n % div == 0)
-				isprime = false;
+				return false;
 			div += 2;
 		}
-		
-		return isprime;
+		return true;
 	}
 	
 	/**
