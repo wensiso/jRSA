@@ -6,8 +6,8 @@ import java.io.IOException;
 
 public class RSAKey {
 	
-	public static Long MIN = 64L;
-	public static Long MAX = 512L;
+	public static Long MIN = 16384L;
+	public static Long MAX = 32768L;
 	
 //	public static Long MIN = 3L;
 //	public static Long MAX = 6L;
