@@ -1,5 +1,5 @@
 # jRSA
-An RSA library written in Java for educational purposes.
+A RSA library written in Java for educational purposes.
 
 ## Examples included
 * FileEncrypter - https://github.com/wensiso/jRSA/blob/master/src/br/edu/jrsa/examples/FileEncrypter.java
